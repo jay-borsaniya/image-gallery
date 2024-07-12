@@ -9,6 +9,8 @@
   position: fixed;
   bottom: 50px;
   right: 50px;
+  height: 70px;
+  width: 70px;
   z-index: 100;
 }
 
@@ -49,7 +51,8 @@
 
 @media screen and (max-width: 576px) {
   .add-icon {
-    bottom: 40px;
-    right: 40px;
+    left: 50%;
+    bottom: 10px;
+    transform: translate(-50%);
   }
 }
