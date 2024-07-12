@@ -1,0 +1,67 @@
+<div class="container mt-4 pb-4">
+  <div *ngIf="isLoading" class="d-flex h-100 align-items-center justify-content-center">
+    <app-loading-spinner></app-loading-spinner>
+  </div>
+
+  <div *ngIf="errorMsg" class="text-center">
+    <p class="alert alert-danger d-flex justify-content-between">
+      <span>{{ errorMsg }}</span>
+      <button
+        type="button"
+        class="btn-close"
+        aria-label="Close"
+        (click)="onRemoveAlert()"
+      ></button>
+    </p>
+  </div>
+
+  <div
+    class="alert alert-secondary text-center mb-0"
+    role="alert"
+    *ngIf="imagesData.length === 0 && !isLoading"
+  >
+    <h4 class="alert-heading">No Image Available</h4>
+    <p class="mb-0">Please Add New Images</p>
+  </div>
+
+  <div
+    class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4"
+    *ngIf="!isLoading"
+  >
+    <div class="col" *ngFor="let imageData of imagesData; let i = index">
+      <div class="card h-100">
+        <img
+          [src]="imageData.image"
+          class="card-img-top"
+          [alt]="imageData.title"
+        />
+        <div class="card-body">
+          <h5 class="card-title">{{ imageData.title }}</h5>
+
+          <div class="tags-container" *ngIf="imageData.tags.length > 0">
+            <p
+              class="tag-box card-text"
+              *ngFor="let tag of imageData.tags; let i = index"
+            >
+              {{ tag | titlecase }}
+            </p>
+          </div>
+          <p class="text-muted mb-0 mt-2">
+            {{ imageData.date | date : "short" }}
+          </p>
+        </div>
+        <div
+          class="card-footer d-flex justify-content-end gap-3 action-container"
+        >
+          <i class="bi bi-eye action-icon" (click)="onView(i)"></i>
+          <i class="bi bi-pencil-square action-icon" (click)="onEdit(i)"></i>
+          <i class="bi bi-trash3 action-icon" (click)="onDelete(i)"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+  <i
+    class="bi bi-file-earmark-plus add-icon btn btn-primary"
+    (click)="openDialog()"
+  ></i>
+</div>

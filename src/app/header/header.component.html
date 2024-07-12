@@ -1,0 +1,63 @@
+<nav
+  class="navbar navbar-light navbar-expand-lg"
+  style="background-color: #e3f2fd"
+>
+  <div class="container-fluid">
+    <a class="navbar-brand">Image Gallery</a>
+    <button
+      class="navbar-toggler"
+      type="button"
+      data-bs-toggle="collapse"
+      data-bs-target="#navbarSupportedContent"
+      aria-controls="navbarSupportedContent"
+      aria-expanded="false"
+      aria-label="Toggle navigation"
+    >
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <li class="nav-item dropdown">
+          <a
+            class="nav-link dropdown-toggle"
+            id="navbarDropdown"
+            role="button"
+            data-bs-toggle="dropdown"
+            aria-expanded="false"
+          >
+            {{ selectedSort || "Sort" | titlecase }}
+          </a>
+          <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+            <li (click)="onSort('date')"><a class="dropdown-item">Date</a></li>
+            <li (click)="onSort('name')"><a class="dropdown-item">Name</a></li>
+            <li (click)="onSort('size')"><a class="dropdown-item">Size</a></li>
+          </ul>
+        </li>
+      </ul>
+      <form class="d-flex" [formGroup]="form" (ngSubmit)="onSearch()">
+        <input
+          class="form-control me-2"
+          type="search"
+          placeholder="Search"
+          aria-label="Search"
+          formControlName="search"
+          required
+        />
+        <button
+          class="btn btn-outline-primary me-2"
+          type="submit"
+          [disabled]="!form.valid"
+        >
+          Search
+        </button>
+        <button
+          class="btn btn-outline-primary"
+          type="reset"
+          (click)="onReset()"
+        >
+          Reset
+        </button>
+      </form>
+    </div>
+  </div>
+</nav>

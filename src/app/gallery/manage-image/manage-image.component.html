@@ -1,0 +1,114 @@
+<div class="modal-header">
+  <h5
+    class="modal-title"
+    mat-dialog-title
+    *ngIf="imageData?.imageData && imageData?.imageData?.imageData"
+  >
+    {{ imageData.imageData?.imageData.title }}
+  </h5>
+  <h5 class="modal-title" mat-dialog-title *ngIf="!imageData?.imageData">
+    Manage Image
+  </h5>
+</div>
+<div class="modal-body" mat-dialog-content>
+  <div *ngIf="imageData?.imageData && !imageData?.imageData?.isEditable">
+    <div class="mb-3">
+      <img
+        [src]="imageData.imageData.imageData.image"
+        class="img-thumbnail"
+        [alt]="imageData.imageData.imageData.title"
+      />
+    </div>
+    <div class="tags-container mb-3">
+      <p class="tag-box" *ngFor="let tag of imageData.imageData.imageData.tags">
+        {{ tag | titlecase }}
+      </p>
+    </div>
+    <div class="text-muted mb-3">
+      {{ imageData.imageData.imageData.date | date : "medium" }}
+    </div>
+
+    <div class="d-flex justify-content-end">
+      <button type="button" class="btn btn-danger me-2" (click)="onCancel()">
+        Cancel
+      </button>
+    </div>
+  </div>
+
+  <form
+    [formGroup]="form"
+    class="form-group"
+    *ngIf="!imageData?.imageData?.imageData || imageData?.imageData?.isEditable"
+  >
+    <div class="mb-3">
+      <label for="imageTitle" class="form-label">*Image Title</label>
+      <input
+        type="text"
+        class="form-control"
+        id="imageTitle"
+        formControlName="title"
+      />
+    </div>
+    <div class="mb-3">
+      <label for="imageFile" class="form-label">*Image</label>
+      <input
+        type="file"
+        accept=".png,.jpg,.jpeg"
+        class="form-control"
+        id="imageFile"
+        (change)="onFileSelect($event)"
+        formControlName="imageFile"
+      />
+    </div>
+    <div class="mb-3 text-center">
+      <img
+        *ngIf="imagePreview && !errorMessage"
+        [src]="imagePreview"
+        class="img-thumbnail"
+        alt="Image preview"
+      />
+      <p class="alert alert-danger" *ngIf="errorMessage">{{ errorMessage }}</p>
+    </div>
+    <div class="mb-3">
+      <label for="tags" class="form-label">*Tags</label>
+      <div class="d-flex">
+        <input
+          type="text"
+          class="form-control"
+          id="tags"
+          formControlName="tags"
+        />
+        <button
+          type="button"
+          class="btn btn-outline-secondary col-4"
+          (click)="onAddTag()"
+          [disabled]="!(form.get('tags').value?.length > 0)"
+        >
+          Add Tag
+        </button>
+      </div>
+      <div class="tags-container" *ngIf="tags.length > 0">
+        <p class="tag-box" *ngFor="let tag of tags; let i = index">
+          <span class="tag">{{ tag }}</span>
+          <button class="x-btn" type="button" (click)="onRemoveTag(i)">
+            X
+          </button>
+        </p>
+      </div>
+    </div>
+
+    <div class="d-flex justify-content-end mt-3">
+      <button type="button" class="btn btn-danger me-2" (click)="onCancel()">
+        Cancel
+      </button>
+      <button
+        type="button"
+        class="btn btn-primary"
+        (click)="onSubmit()"
+        [disabled]="!form.valid || tags.length < 1 || errorMessage"
+      >
+        Submit
+      </button>
+    </div>
+  </form>
+</div>
