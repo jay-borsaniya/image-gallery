@@ -19,11 +19,15 @@
         [alt]="imageData.imageData.imageData.title"
       />
     </div>
-    <div class="tags-container mb-3">
-      <p class="tag-box" *ngFor="let tag of imageData.imageData.imageData.tags">
+    <div class="tags-container mb-3 d-flex align-items-center">
+      <p class="tag-box" *ngFor="let tag of (showAll ? imageData.imageData.imageData.tags : imageData.imageData.imageData.tags.slice(0, 2))">
         {{ tag | titlecase }}
       </p>
+      <p (click)="onShowAll()" *ngIf="imageData.imageData.imageData.tags.length > 2 && !showAll" class="tag-counter-box">
+        <span class="tag-counter">+{{ imageData.imageData.imageData.tags.length-2 }}</span>
+      </p>
     </div>
+
     <div class="text-muted mb-3">
       {{ imageData.imageData.imageData.date | date : "medium" }}
     </div>
@@ -40,10 +44,25 @@
     class="form-group"
     *ngIf="!imageData?.imageData?.imageData || imageData?.imageData?.isEditable"
   >
+    <div *ngIf="errorMessage" class="text-center mt-2">
+      <p class="alert alert-danger d-flex justify-content-between">
+        <span>{{ errorMessage }}</span>
+        <button
+          type="button"
+          class="btn-close x-btn"
+          aria-label="Close"
+          (click)="onRemoveAlert()"
+        >
+          X
+        </button>
+      </p>
+    </div>
+
     <div class="mb-3">
       <label for="imageTitle" class="form-label">*Image Title</label>
       <input
         type="text"
+        maxlength="50"
         class="form-control"
         id="imageTitle"
         formControlName="title"
@@ -62,12 +81,11 @@
     </div>
     <div class="mb-3 text-center">
       <img
-        *ngIf="imagePreview && !errorMessage"
+        *ngIf="imagePreview"
         [src]="imagePreview"
         class="img-thumbnail"
         alt="Image preview"
       />
-      <p class="alert alert-danger" *ngIf="errorMessage">{{ errorMessage }}</p>
     </div>
     <div class="mb-3">
       <label for="tags" class="form-label">*Tags</label>
@@ -76,6 +94,7 @@
           type="text"
           class="form-control"
           id="tags"
+          maxlength="10"
           formControlName="tags"
         />
         <button
@@ -87,12 +106,16 @@
           Add Tag
         </button>
       </div>
-      <div class="tags-container" *ngIf="tags.length > 0">
-        <p class="tag-box" *ngFor="let tag of tags; let i = index">
+
+      <div class="tags-container d-flex align-items-center" *ngIf="tags.length > 0">
+        <p class="tag-box" *ngFor="let tag of (showAll ? tags : tags.slice(0, 2)); let i = index">
           <span class="tag">{{ tag }}</span>
           <button class="x-btn" type="button" (click)="onRemoveTag(i)">
             X
           </button>
+        </p>
+        <p (click)="onShowAll()" *ngIf="tags.length > 2 && !showAll" class="tag-counter-box">
+          <span class="tag-counter">+{{ tags.length-2 }}</span>
         </p>
       </div>
     </div>
@@ -105,7 +128,7 @@
         type="button"
         class="btn btn-primary"
         (click)="onSubmit()"
-        [disabled]="!form.valid || tags.length < 1 || errorMessage"
+        [disabled]="!form.valid || tags.length < 1 || !imagePreview"
       >
         Submit
       </button>

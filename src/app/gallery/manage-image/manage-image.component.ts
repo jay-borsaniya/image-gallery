@@ -18,6 +18,7 @@ export class ManageImageComponent {
   imagePreview: string | ArrayBuffer | null = null;
   file: File;
   imageData: any;
+  showAll = false;
 
   constructor(
     @Optional() public dialogRef: MatDialogRef<ManageImageComponent>,
@@ -37,13 +38,14 @@ export class ManageImageComponent {
       this.form = new FormGroup({
         title: new FormControl(this.imageData.imageData.imageData.title, [
           Validators.required,
+          this.validateField,
         ]),
         imageFile: new FormControl(null),
         tags: new FormControl(null),
       });
     } else {
       this.form = new FormGroup({
-        title: new FormControl(null, [Validators.required]),
+        title: new FormControl(null, [Validators.required, this.validateField]),
         imageFile: new FormControl(null, [Validators.required]),
         tags: new FormControl(null),
       });
@@ -65,19 +67,30 @@ export class ManageImageComponent {
       reader.readAsDataURL(this.file);
     } else {
       this.errorMessage = 'Please Enter Valid Image (.png/.jpg/.jpeg)';
+      this.imagePreview = null;
     }
   }
 
   onAddTag() {
-    const tagMatch = this.form.get('tags').value.trim();
-    if (
-      this.tags.filter((tag) => tag.toLowerCase() === tagMatch.toLowerCase())
-        .length === 0
-    ) {
-      this.tags.push(tagMatch);
-      this.form.get('tags').reset();
+    if (this.tags.length < 5) {
+      const tagMatch = this.form.get('tags').value.trim();
+      if (tagMatch.length <= 10 && tagMatch.length > 0) {
+        this.errorMessage = null;
+        if (
+          this.tags.filter(
+            (tag) => tag.toLowerCase() === tagMatch.toLowerCase()
+          ).length === 0
+        ) {
+          this.tags.push(tagMatch);
+          this.form.get('tags').reset();
+        } else {
+          this.form.get('tags').reset();
+        }
+      } else {
+        this.errorMessage = 'Tag should be 1-10 character';
+      }
     } else {
-      this.form.get('tags').reset();
+      this.errorMessage = 'Maximum tags limit reached';
     }
   }
 
@@ -85,10 +98,15 @@ export class ManageImageComponent {
     this.tags.splice(index, 1);
   }
 
+  onRemoveAlert() {
+    this.errorMessage = null;
+  }
+
   onSubmit(): void {
     if (this.form.valid) {
       this.form.patchValue({ tags: this.tags });
       const response = this.form.value;
+      response.title = response.title.trim();
 
       response.encodedFile = this.imagePreview;
       response.id = this.imageData?.imageData?.index;
@@ -114,6 +132,23 @@ export class ManageImageComponent {
       this.dialogRef.close();
     } else {
       this.bottomSheetRef.dismiss();
+    }
+  }
+
+  public onShowAll() {
+    this.showAll = true;
+  }
+
+  validateField(control: FormControl): { [s: string]: boolean } {
+    if (control.value) {
+      const value = control.value.trim();
+      if (value.length < 1 || value.length > 50) {
+        return { fieldInvalid: true };
+      } else {
+        return null;
+      }
+    } else {
+      return null;
     }
   }
 }

@@ -41,14 +41,19 @@
         <div class="card-body">
           <h5 class="card-title">{{ imageData.title }}</h5>
 
-          <div class="tags-container" *ngIf="imageData.tags.length > 0">
+          <div class="tags-container d-flex align-items-center">
             <p
               class="tag-box card-text"
-              *ngFor="let tag of imageData.tags; let i = index"
+              *ngFor="let tag of imageData.tags.slice(0, 2)"
             >
               {{ tag | titlecase }}
             </p>
+            <p *ngIf="imageData.tags.length > 2" class="tag-counter-box">
+              <span class="tag-counter">+{{ imageData.tags.length-2 }}</span>
+            </p>
           </div>
+
+
           <p class="text-muted mb-0 mt-2">
             {{ imageData.date | date : "short" }}
           </p>
