@@ -63,3 +63,47 @@ input.ng-touched.ng-invalid {
 .alert {
   padding: 0.5rem;
 }
+
+
+/* :host {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+} */
+
+.drag-drop-area {
+  border: 2px dashed #ccc;
+  border-radius: 10px;
+  width: 100%;
+  height: 200px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  background-color: #fff;
+  cursor: pointer;
+}
+
+.drag-drop-area p {
+  margin: 0;
+  font-size: 16px;
+  color: #999;
+}
+
+.drag-drop-area.dragover {
+  border-color: #333;
+  background-color: #e9e9e9;
+}
+
+#preview {
+  margin-top: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#preview img {
+  max-width: 300px;
+  max-height: 200px;
+  border-radius: 10px;
+}

@@ -1,4 +1,10 @@
-import { Component, Inject, Optional } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  Inject,
+  Optional,
+  ViewChild,
+} from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import {
   MAT_BOTTOM_SHEET_DATA,
@@ -19,6 +25,10 @@ export class ManageImageComponent {
   file: File;
   imageData: any;
   showAll = false;
+
+  @ViewChild('fileInput', { static: false })
+  fileInput: ElementRef<HTMLInputElement>;
+  imageSrc: string | ArrayBuffer | null = null;
 
   constructor(
     @Optional() public dialogRef: MatDialogRef<ManageImageComponent>,
@@ -52,24 +62,24 @@ export class ManageImageComponent {
     }
   }
 
-  onFileSelect(event: Event): void {
-    this.file = (event.target as HTMLInputElement).files[0];
+  // onFileSelect(event: Event): void {
+  //   this.file = (event.target as HTMLInputElement).files[0];
 
-    if (
-      this.file &&
-      (this.file.type === 'image/png' || this.file.type === 'image/jpeg')
-    ) {
-      this.errorMessage = null;
-      const reader = new FileReader();
-      reader.onload = () => {
-        this.imagePreview = reader.result;
-      };
-      reader.readAsDataURL(this.file);
-    } else {
-      this.errorMessage = 'Please Enter Valid Image (.png/.jpg/.jpeg)';
-      this.imagePreview = null;
-    }
-  }
+  //   if (
+  //     this.file &&
+  //     (this.file.type === 'image/png' || this.file.type === 'image/jpeg')
+  //   ) {
+  //     this.errorMessage = null;
+  //     const reader = new FileReader();
+  //     reader.onload = () => {
+  //       this.imagePreview = reader.result;
+  //     };
+  //     reader.readAsDataURL(this.file);
+  //   } else {
+  //     this.errorMessage = 'Please Enter Valid Image (.png/.jpg/.jpeg)';
+  //     this.imagePreview = null;
+  //   }
+  // }
 
   onAddTag() {
     if (this.tags.length < 5) {
@@ -149,6 +159,53 @@ export class ManageImageComponent {
       }
     } else {
       return null;
+    }
+  }
+
+  onDragOver(event: DragEvent) {
+    event.preventDefault();
+    (event.currentTarget as HTMLElement).classList.add('dragover');
+  }
+
+  onDragLeave() {
+    const dragDropArea = document.querySelector('.drag-drop-area');
+    dragDropArea?.classList.remove('dragover');
+  }
+
+  onDrop(event: DragEvent) {
+    event.preventDefault();
+    const dragDropArea = document.querySelector('.drag-drop-area');
+    dragDropArea?.classList.remove('dragover');
+    const files = event.dataTransfer?.files;
+    if (files?.length) {
+      this.handleFiles(files);
+    }
+  }
+
+  onClick() {
+    this.fileInput.nativeElement.click();
+  }
+
+  onFileSelected(event: Event) {
+    const files = (event.target as HTMLInputElement).files;
+    if (files?.length) {
+      this.handleFiles(files);
+    }
+  }
+
+  handleFiles(files: FileList) {
+    this.file = files[0];
+
+    if (this.file && this.file.type.startsWith('image/')) {
+      this.errorMessage = null;
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        this.imagePreview = event.target?.result;
+      };
+      reader.readAsDataURL(this.file);
+    } else {
+      this.errorMessage = 'Please Enter Valid Image (.png/.jpg/.jpeg)';
+      this.imagePreview = null;
     }
   }
 }

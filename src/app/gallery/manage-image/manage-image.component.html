@@ -68,25 +68,28 @@
         formControlName="title"
       />
     </div>
-    <div class="mb-3">
-      <label for="imageFile" class="form-label">*Image</label>
+
+    <div class="drag-drop-area mb-3" (dragover)="onDragOver($event)" (dragleave)="onDragLeave()" (drop)="onDrop($event)" (click)="onClick()">
+      <p>Drag & Drop an image or click to select</p>
       <input
+        #fileInput
         type="file"
         accept=".png,.jpg,.jpeg"
         class="form-control"
         id="imageFile"
-        (change)="onFileSelect($event)"
+        (change)="onFileSelected($event)"
         formControlName="imageFile"
+        hidden
       />
     </div>
-    <div class="mb-3 text-center">
+    <div class="mb-3 text-center" *ngIf="imagePreview">
       <img
-        *ngIf="imagePreview"
         [src]="imagePreview"
         class="img-thumbnail"
         alt="Image preview"
       />
     </div>
+
     <div class="mb-3">
       <label for="tags" class="form-label">*Tags</label>
       <div class="d-flex">
